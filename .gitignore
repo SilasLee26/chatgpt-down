@@ -1,0 +1,22 @@
+﻿# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore editors
+.vscode/
+.idea/
+
+# Ignore dependency and build artifacts
+node_modules/
+dist/
+coverage/
+
+# Ignore temporary/log files
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Ignore archives and debug exports
+*.zip
+*.md.bak
