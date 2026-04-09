@@ -15,7 +15,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 
   try {
-    await chrome.tabs.sendMessage(tab.id, { type: "EXPORT_CHAT_MD" });
+    await sendExportMessage(tab.id);
   } catch (error) {
     console.error("[chatgpt-down] failed to send export message", error);
   }
@@ -69,4 +69,26 @@ async function downloadMarkdownFile(filename, content) {
   } finally {
     setTimeout(() => URL.revokeObjectURL(objectUrl), 30_000);
   }
+}
+
+async function sendExportMessage(tabId) {
+  try {
+    await chrome.tabs.sendMessage(tabId, { type: "EXPORT_CHAT_MD" });
+  } catch (error) {
+    if (!isMissingReceiverError(error)) {
+      throw error;
+    }
+
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ["content.js"]
+    });
+
+    await chrome.tabs.sendMessage(tabId, { type: "EXPORT_CHAT_MD" });
+  }
+}
+
+function isMissingReceiverError(error) {
+  const message = error instanceof Error ? error.message : String(error || "");
+  return message.includes("Receiving end does not exist");
 }

@@ -3,7 +3,7 @@
   "name": "ChatGPT Chat Downloader (MD)",
   "version": "1.0.0",
   "description": "Export the current ChatGPT conversation as a Markdown file.",
-  "permissions": ["activeTab", "tabs", "downloads"],
+  "permissions": ["activeTab", "tabs", "downloads", "scripting"],
   "host_permissions": [
     "https://chatgpt.com/*",
     "https://chat.openai.com/*"
