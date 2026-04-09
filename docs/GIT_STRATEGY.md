@@ -1,32 +1,38 @@
-﻿# Git Strategy (Windows First, macOS Next)
+# Git Strategy
 
-This project currently ships from Windows only.
+This project is small enough to stay on one shared code line while Chrome behavior remains the same on macOS and Windows.
 
 ## Current State
 
-- `main` is the active development branch for the Windows version.
-- Use feature branches named `feat/windows-...` or `fix/windows-...`.
+- `main` is the stable shared branch.
+- Day-to-day work should happen in short-lived feature branches created from `main`.
+- Prefer branch names such as `codex/feat/macos-...`, `codex/fix/macos-...`, `codex/feat/export-...`, or `codex/docs/...`.
 
-## When macOS starts
+## Recommended Workflow
 
-Use one repository with branch separation:
+1. Branch from `main`.
+2. Keep each branch focused on one change area.
+3. Validate the extension manually in Chrome.
+4. Open a pull request back into `main`.
+5. Tag releases from `main` after the branch is merged.
 
-- Keep `main` as the shared and stable baseline.
-- Create long-lived platform branches: `platform/windows` and `platform/macos`.
+## When To Split By Platform
 
-Workflow:
+Do not create long-lived `platform/windows` or `platform/macos` branches yet.
+Introduce them only if one of these becomes true:
 
-1. Shared logic goes to `main` first.
-2. Platform-only changes go to the matching platform branch.
-3. Regularly merge `main` into platform branches to stay aligned.
+- Chrome extension code starts to differ per platform
+- Packaging or release assets become platform-specific
+- The same fix must be repeatedly cherry-picked between platform variants
 
 ## Versioning and Releases
 
 - Use SemVer tags on `main` for shared releases, for example `v0.2.0`.
-- For platform-specific releases, add annotated tags, for example `windows-v0.2.0` and `macos-v0.2.0`.
+- Keep release notes explicit about what was verified on macOS and Windows.
+- If platform-specific assets are needed later, keep the Git history shared and separate the packaged artifacts in releases.
 
 ## Why this model
 
 - Keeps one GitHub repo and one issue tracker.
-- Makes shared logic reuse easier.
-- Keeps platform divergence explicit and manageable.
+- Keeps shared logic reuse easy while the codebase is still small.
+- Avoids unnecessary branch overhead before real platform divergence appears.

@@ -6,10 +6,10 @@
       return;
     }
 
-    exportConversationAsMarkdown();
+    void exportConversationAsMarkdown();
   });
 
-  function exportConversationAsMarkdown() {
+  async function exportConversationAsMarkdown() {
     const messages = collectMessages();
 
     if (messages.length === 0) {
@@ -27,7 +27,7 @@
     const markdown = buildMarkdown(title, messages);
     const filename = `${sanitizeFileName(title)}-${buildTimestamp()}.md`;
 
-    triggerDownload(filename, markdown);
+    await triggerDownload(filename, markdown);
   }
 
   function collectMessages() {
@@ -482,9 +482,28 @@
     return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
   }
 
-  function triggerDownload(filename, content) {
-    // Add UTF-8 BOM for better compatibility with Excel/Notepad on Windows
-    const blob = new Blob(["\ufeff" + content], { type: "text/markdown;charset=utf-8" });
+  async function triggerDownload(filename, content) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: "DOWNLOAD_MARKDOWN",
+        filename,
+        content,
+        pageUrl: window.location.href
+      });
+
+      if (response?.ok) {
+        return;
+      }
+
+      throw new Error(response?.error || "Unknown download error");
+    } catch (error) {
+      console.warn("[chatgpt-down] extension download failed, falling back to page download", error);
+      fallbackDownload(filename, content);
+    }
+  }
+
+  function fallbackDownload(filename, content) {
+    const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
@@ -495,4 +514,3 @@
     setTimeout(() => URL.revokeObjectURL(url), 100);
   }
 })();
-

@@ -1,9 +1,9 @@
-﻿# chatgpt-down
+# chatgpt-down
 
 Export the current ChatGPT conversation to Markdown from a Chrome extension.
 
-This repository is currently focused on the Windows development workflow.
-macOS development will be added in a separate platform flow later.
+The extension code is shared across platforms and can be developed on macOS or Windows.
+This repository now treats Chrome on both platforms as part of one main workflow.
 
 ## Features
 
@@ -17,6 +17,7 @@ macOS development will be added in a separate platform flow later.
 ## Requirements
 
 - Google Chrome (or Chromium-based browser)
+- macOS or Windows
 - Access to `https://chatgpt.com/*`
 - Access to `https://chat.openai.com/*`
 
@@ -25,7 +26,12 @@ macOS development will be added in a separate platform flow later.
 1. Open `chrome://extensions/`.
 2. Enable `Developer mode`.
 3. Click `Load unpacked`.
-4. Select `D:\projects\chatgpt-down`.
+4. Select your local clone of this repository.
+
+Example paths:
+
+- macOS: `/Users/your-name/Documents/Playground/chatgpt-down`
+- Windows: `D:\projects\chatgpt-down`
 
 ## Usage
 
@@ -39,7 +45,9 @@ macOS development will be added in a separate platform flow later.
 - `manifest.json`: MV3 extension manifest
 - `background.js`: toolbar click handling and message dispatch
 - `content.js`: content extraction and Markdown serialization
-- `docs/GIT_STRATEGY.md`: branch and release strategy for Windows/macOS split
+- `docs/GIT_STRATEGY.md`: branch and release strategy for cross-platform development
+- `docs/MACOS_MIGRATION_PLAN.md`: step-by-step migration plan for Chrome on macOS
+- `docs/MACOS_TESTING.md`: manual verification checklist for Chrome on macOS
 
 ## Open Source
 
@@ -51,6 +59,6 @@ macOS development will be added in a separate platform flow later.
 
 ## Roadmap
 
-- Stabilize Windows export behavior and formatting parity
-- Add macOS workflow and branch strategy implementation
+- Validate export behavior on Chrome for macOS
+- Keep Markdown formatting behavior consistent across platforms
 - Improve regression tests for formatting edge cases
