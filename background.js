@@ -78,7 +78,6 @@ async function sendExportMessage(tabId) {
     if (!isMissingReceiverError(error)) {
       throw error;
     }
-
     await chrome.scripting.executeScript({
       target: { tabId },
       files: ["content.js"]

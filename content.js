@@ -1,7 +1,17 @@
 (function () {
+  if (globalThis.__chatgptDownContentScriptLoaded) {
+    return;
+  }
+
+  globalThis.__chatgptDownContentScriptLoaded = true;
+
   const TOP_THRESHOLD_PX = 8;
 
   chrome.runtime.onMessage.addListener((message) => {
+    if (message?.type === "CHATGPT_DOWN_PING") {
+      return false;
+    }
+
     if (message?.type !== "EXPORT_CHAT_MD") {
       return;
     }
@@ -105,6 +115,15 @@
         current = current.parentElement;
       }
       return false;
+    }
+
+    function normalizeTextNode(raw) {
+      return raw
+        .replace(/\r\n/g, "\n")
+        .replace(/\u00a0/g, " ")
+        .split("\n")
+        .map((line) => line.replace(/[^\S\n]+/g, " "))
+        .join("\n");
     }
 
     function extractLanguage(node) {
@@ -288,9 +307,9 @@
           return;
         }
 
-        let text = raw.replace(/\s+/g, " ");
+        let text = normalizeTextNode(raw);
         if (markdown.endsWith("\n") || markdown.endsWith(" ") || isAtListMarker()) {
-          text = text.replace(/^\s+/, "");
+          text = text.replace(/^[ \t]+/, "");
         }
         markdown += text;
         return;
@@ -408,6 +427,7 @@
       .replace(/((?:^|\n)\s*(?:-|\d+\.)\s*)\n+\s*/g, "$1")
       .replace(/\n{3,}/g, "\n\n")
       .replace(/ +(?=\n)/g, "") // remove trailing spaces
+      .replace(/\n +(?=(?:-|\d+\.)\s)/g, "\n")
       .trim();
   }
 
